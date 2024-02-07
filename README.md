@@ -1,1 +1,1 @@
-# DePreMa
+# Decentralized Prediction Market
