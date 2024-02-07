@@ -1,10 +1,11 @@
+''
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
 
 import { cookieStorage, createStorage } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
 
 // Get projectId at https://cloud.walletconnect.com
-export const projectId = '47c51841dc9d90ea37b159c85ba4201d'
+export const projectId = process.env.NEXT_PUBLIC_PROJECT_ID
 
 if (!projectId) throw new Error('Project ID is not defined')
 

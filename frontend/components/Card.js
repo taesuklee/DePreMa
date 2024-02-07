@@ -11,6 +11,7 @@ export default function Card({ game }) {
         </div>
       </div>
       <div className="my-3 flex items-center">
+        <span className="mx-3 text-[8px] text-secondary-foreground">@</span>
         <div className="w-[calc(100%-189px)] border-b border-b-primary" />
       </div>
       <div className="flex items-center justify-between">
