@@ -1,5 +1,6 @@
 'use client'
 
+import Card from '@/components/Card'
 import Header from '@/components/Header'
 
 export default function Home() {
@@ -9,7 +10,9 @@ export default function Home() {
         <Header />
         <div className="min-h-screen grid grid-cols-1 md:grid-cols-4">
           <div className="col-span-1 border border-white"></div>
-          <div className="col-span-2 border border-white"></div>
+          <div className="col-span-2 border border-white">
+            <Card />
+          </div>
           <div className="col-span-1 border border-white"></div>
         </div>
       </main>
