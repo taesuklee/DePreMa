@@ -1,23 +1,16 @@
 'use client'
-import { fontMono } from '@/lib/font'
-import { cn } from '@/lib/utils'
-import Image from 'next/image'
 
-import WalletConnect from '@/components/WalletConnect'
+import Header from '@/components/Header'
 
 export default function Home() {
   return (
     <div className="flex min-h-[100dvh] flex-row px-0">
       <main className="flex-1">
-        <div className="flex h-16 items-center justify-center border-b border-b-border">
-          <h1
-            className={cn(
-              'flex-1 font-mono text-xl font-black leading-5 mx-5',
-              fontMono.variable
-            )}>
-            Prediction Market
-          </h1>
-          <WalletConnect />
+        <Header />
+        <div className="min-h-screen grid grid-cols-1 md:grid-cols-4">
+          <div className="col-span-1 border border-white"></div>
+          <div className="col-span-2 border border-white"></div>
+          <div className="col-span-1 border border-white"></div>
         </div>
       </main>
     </div>
