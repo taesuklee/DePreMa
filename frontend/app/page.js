@@ -1,5 +1,5 @@
 import Header from '@/components/Header'
-import { MiddlePanel } from '@/components/middlePanel'
+import { MiddlePanel } from '@/components/MiddlePanel'
 
 export default async function Home() {
   return (
