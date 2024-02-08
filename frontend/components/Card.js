@@ -35,7 +35,7 @@ export default function Card({ game, setOpen }) {
         </div>
       </div>
       <div className="my-3 flex items-center">
-        <span className="mx-3 text-[12px] text-secondary-foreground w-1/4 truncate">
+        <span className="mx-3 text-[12px] text-secondary-foreground w-1/4 truncate hover:w-full">
           {game.league.name ?? UNKNOWN}
         </span>
         <div className="w-[calc(100%-200px)] border-b border-b-primary" />
