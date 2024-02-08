@@ -4,8 +4,8 @@ import { fetchGames } from '@/lib/fetch-data'
 import dayjs from 'dayjs'
 
 export default async function Home() {
-  const today = dayjs().format('YYYY-MM-DD')
-  const gameLists = await fetchGames(today)
+  const date = dayjs().format('YYYY-MM-DD')
+  const gameLists = await fetchGames(date)
 
   return (
     <div className="flex min-h-[100dvh] flex-row px-0">

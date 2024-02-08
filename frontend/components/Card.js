@@ -1,4 +1,5 @@
 import { UNKNOWN } from '@/lib/constants'
+import { Button } from '@mui/material'
 import Image from 'next/image'
 
 export default function Card({ game }) {
@@ -23,10 +24,17 @@ export default function Card({ game }) {
               ? game.home_score.current
               : UNKNOWN}
           </div>
-          <button>Bet</button>
+          <Button
+            variant="outlined"
+            disabled={game.status === 'finished' ?? true}>
+            Bet
+          </Button>
         </div>
       </div>
       <div className="my-3 flex items-center">
+        <span className="mx-3 text-[12px] text-secondary-foreground w-1/4 truncate">
+          {game.league.name ?? UNKNOWN}
+        </span>
         <div className="w-[calc(100%-200px)] border-b border-b-primary" />
         <span className="mx-3 text-[12px] text-secondary-foreground">
           {game.status === 'notstarted'
@@ -53,7 +61,11 @@ export default function Card({ game }) {
               ? game.away_score.current
               : UNKNOWN}
           </div>
-          <button>Bet</button>
+          <Button
+            variant="outlined"
+            disabled={game.status === 'finished' ?? true}>
+            Bet
+          </Button>
         </div>
       </div>
     </div>
