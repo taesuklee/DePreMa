@@ -8,13 +8,6 @@ function WalletConnect() {
   const { disconnect } = useDisconnect()
   const { selectedNetworkId } = useWeb3ModalState()
   const { address, isConnected, isConnecting, isDisconnected } = useAccount()
-  console.log(
-    '🚀 ~ WalletConnect ~ address:',
-    address,
-    isConnected,
-    isConnecting,
-    isDisconnected
-  )
 
   return (
     <div className="mr-5 truncate">
