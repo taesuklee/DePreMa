@@ -41705,7 +41705,7 @@ const mockdata = {
 export const fetchGames = async (date) => {
   const options = {
     method: 'GET',
-    url: 'https://sportscore1.p.rapidapi.com/sports/2/events/date/2024-02-08',
+    url: `https://sportscore1.p.rapidapi.com/sports/2/events/date/${date}`,
     params: { page: '1' },
     headers: {
       'X-RapidAPI-Key': process.env.RAPID_API_KEY,

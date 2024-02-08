@@ -2,8 +2,6 @@ import { UNKNOWN } from '@/lib/constants'
 import Image from 'next/image'
 
 export default function Card({ game }) {
-  console.log('🚀 ~ Card ~ game:', game)
-
   return (
     <div className="m-4 mb-2 rounded-[8px] bg-card p-4">
       <div className="flex items-center justify-between">

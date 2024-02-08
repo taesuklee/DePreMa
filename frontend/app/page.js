@@ -1,9 +1,11 @@
 import Card from '@/components/Card'
 import Header from '@/components/Header'
 import { fetchGames } from '@/lib/fetch-data'
+import dayjs from 'dayjs'
 
 export default async function Home() {
-  const gameLists = await fetchGames()
+  const today = dayjs().format('YYYY-MM-DD')
+  const gameLists = await fetchGames(today)
 
   return (
     <div className="flex min-h-[100dvh] flex-row px-0">
