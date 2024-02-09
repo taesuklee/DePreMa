@@ -11,6 +11,7 @@ import {
   InputAdornment,
   Button,
 } from '@mui/material'
+import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 
 const style = {
@@ -27,6 +28,7 @@ const style = {
 
 export const Modal = ({ text }) => {
   const [amount, setAmount] = useState(0)
+  const [loading, setLoading] = useState(false)
   const { open, setOpen } = useModalContext()
   const { address } = useWalletContext()
 
@@ -34,6 +36,7 @@ export const Modal = ({ text }) => {
 
   const confirmTransaction = (amount) => {
     console.log('amount', amount)
+    setLoading(true)
   }
 
   return (
@@ -44,32 +47,38 @@ export const Modal = ({ text }) => {
       aria-describedby="modal-modal-description">
       <Box sx={style}>
         {address ? (
-          <>
-            <Typography
-              id="modal-modal-title"
-              variant="h6"
-              component="h2"
-              className="text-black">
-              How much do you want to stake?
-            </Typography>
-            <div className="flex items-center justify-between">
-              <FormControl sx={{ m: 1 }} variant="outlined">
-                <OutlinedInput
-                  onChange={(e) => setAmount(e.target.value)}
-                  endAdornment={
-                    <InputAdornment position="end">ETH</InputAdornment>
-                  }
-                  value={amount}
-                />
-              </FormControl>
-              <Button
-                className="border-blue-800 text-blue-800"
-                variant="outlined"
-                onClick={() => confirmTransaction(amount)}>
-                Confirm
-              </Button>
+          loading ? (
+            <div className="flex items-center justify-center">
+              <Loader2 className="animate-spin" />
             </div>
-          </>
+          ) : (
+            <>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+                className="text-black">
+                How much do you want to stake?
+              </Typography>
+              <div className="flex items-center justify-between">
+                <FormControl sx={{ m: 1 }} variant="outlined">
+                  <OutlinedInput
+                    onChange={(e) => setAmount(e.target.value)}
+                    endAdornment={
+                      <InputAdornment position="end">ETH</InputAdornment>
+                    }
+                    value={amount}
+                  />
+                </FormControl>
+                <Button
+                  className="border-blue-800 text-blue-800"
+                  variant="outlined"
+                  onClick={() => confirmTransaction(amount)}>
+                  Confirm
+                </Button>
+              </div>
+            </>
+          )
         ) : (
           <Typography
             id="modal-modal-title"
