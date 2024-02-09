@@ -29,6 +29,7 @@ const style = {
 export const Modal = ({ text }) => {
   const [amount, setAmount] = useState(0)
   const [loading, setLoading] = useState(false)
+
   const { open, setOpen } = useModalContext()
   const { address } = useWalletContext()
 
@@ -62,7 +63,13 @@ export const Modal = ({ text }) => {
               </Typography>
               <div className="flex items-center justify-between">
                 <FormControl sx={{ m: 1 }} variant="outlined">
-                  <OutlinedInput
+                  <TextField
+                    error={amount && amount > 0 ? false : true}
+                    helperText={
+                      amount && amount > 0
+                        ? null
+                        : 'The amount should be bigger than 0'
+                    }
                     onChange={(e) => setAmount(e.target.value)}
                     endAdornment={
                       <InputAdornment position="end">ETH</InputAdornment>
