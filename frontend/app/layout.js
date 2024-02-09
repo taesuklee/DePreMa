@@ -10,6 +10,7 @@ import { cookieToInitialState } from 'wagmi'
 
 import { config } from '@/config'
 import ContextProvider from '@/context'
+import { ModalContextProvider } from '@/context/ModalContext'
 
 export const metadata = {
   title: 'Create Next App',
@@ -22,9 +23,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <ContextProvider initialState={initialState}>
-          {children}
-        </ContextProvider>
+        <ModalContextProvider>
+          <ContextProvider initialState={initialState}>
+            {children}
+          </ContextProvider>
+        </ModalContextProvider>
       </body>
     </html>
   )

@@ -1,11 +1,11 @@
-'use client'
+import { useModalContext } from '@/context/ModalContext'
 import { UNKNOWN } from '@/lib/constants'
 import { Button } from '@mui/material'
 import Image from 'next/image'
-import { useState } from 'react'
-import { Modal } from './Modal'
 
-export default function Card({ game, setOpen }) {
+export default function Card({ game }) {
+  const { open, setOpen } = useModalContext()
+
   return (
     <div className="m-4 mb-2 rounded-[8px] bg-card p-4">
       <div className="flex items-center justify-between">
@@ -28,6 +28,7 @@ export default function Card({ game, setOpen }) {
               : UNKNOWN}
           </div>
           <Button
+            onClick={() => setOpen(!open)}
             variant="outlined"
             disabled={game.status === 'finished' ?? true}>
             Bet
