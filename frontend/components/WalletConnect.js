@@ -1,4 +1,5 @@
 'use client'
+import { useWalletContext } from '@/context/WalletContext'
 import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useWeb3ModalState } from '@web3modal/wagmi/react'
 import { useAccount, useDisconnect } from 'wagmi'
@@ -8,6 +9,10 @@ function WalletConnect() {
   const { disconnect } = useDisconnect()
   const { selectedNetworkId } = useWeb3ModalState()
   const { address, isConnected, isConnecting, isDisconnected } = useAccount()
+
+  const { setAddress, setIsConnected } = useWalletContext()
+  setAddress(address)
+  setIsConnected(isConnected)
 
   return (
     <div className="mr-5 truncate">
