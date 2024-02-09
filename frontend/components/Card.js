@@ -31,7 +31,7 @@ export default function Card({ game }) {
             onClick={() => setOpen(!open)}
             variant="outlined"
             disabled={game.status === 'finished' ?? true}>
-            Bet
+            Stake
           </Button>
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function Card({ game }) {
             variant="outlined"
             disabled={game.status === 'finished' ?? true}
             onClick={() => setOpen(!open)}>
-            Bet
+            Stake
           </Button>
         </div>
       </div>
