@@ -3,7 +3,7 @@ pragma solidity ^0.8.23;
 
 
 
-contract DePreMa {
+contract DePreMa is ResultsConsumer {
 
     /// @notice The minimum amount of tokens that can be wagered
   uint256 private constant MIN_WAGER = 0.00001 ether;
