@@ -1,6 +1,8 @@
 'use client'
 import { useModalContext } from '@/context/ModalContext'
 import { useWalletContext } from '@/context/WalletContext'
+import { sportsPredictionGameABI } from '@/generated'
+import { contractAddress } from '@/lib/constants'
 import {
   Box,
   Typography,
@@ -35,9 +37,47 @@ export const Modal = ({ text }) => {
 
   const handleClose = () => setOpen(!open)
 
-  const confirmTransaction = (amount) => {
-    console.log('amount', amount)
+  const confirmTransaction = async (amount) => {
     setLoading(true)
+    const gameId = await readContract({
+      address: contractAddress,
+      abi: sportsPredictionGameABI,
+      functionName: 'getGameId',
+      args: [BigInt(prediction.game.sportId), BigInt(prediction.game.id)],
+    })
+
+    const game = await readContract({
+      address: contractAddress,
+      abi: sportsPredictionGameABI,
+      functionName: 'getGame',
+      args: [gameId],
+    })
+
+    if (game.externalId === BigInt(0)) {
+      const config = await prepareWriteContract({
+        address: contractAddress,
+        abi: sportsPredictionGameABI,
+        functionName: 'registerAndPredict',
+        args: [
+          BigInt(prediction.game.sportId),
+          BigInt(prediction.game.id),
+          BigInt(prediction.game.timestamp),
+          winnerToResult[prediction.predictedWinner],
+        ],
+        value: parseEther(`${prediction.wager ?? 0}`),
+      })
+
+      tx = await writeContract(config)
+    } else {
+      const config = await prepareWriteContract({
+        address: contractAddress,
+        abi: sportsPredictionGameABI,
+        functionName: 'predict',
+        args: [gameId, winnerToResult[prediction.predictedWinner]],
+        value: parseEther(`${prediction.wager ?? 0}`),
+      })
+      tx = await writeContract(config)
+    }
   }
 
   return (
