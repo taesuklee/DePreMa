@@ -2,7 +2,7 @@
 pragma solidity ^0.8.7;
 
 import {Functions, FunctionsClient} from "./dev/functions/FunctionsClient.sol";
-//import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 
 /// @title ResultsConsumer
 /// @notice Requests and receives sports results using Chainlink Functions

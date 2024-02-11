@@ -2,8 +2,20 @@ pragma solidity ^0.8.23;
 
 
 
+import {ResultsConsumer} from "./ResultsConsumer.sol";
 
-contract DePreMa is ResultsConsumer {
+// Configuration parameters for initializing the contract
+struct Config {
+  address oracle; // The address of the Chainlink Function oracle
+  uint64 subscriptionId; // The ID of the Chainlink Functions subscription
+  uint64 destinationChainSelector; // The chain selector for the winnings transfer destination chain
+  uint32 gasLimit; // The gas limit for the Chainlink Functions request callback
+  bytes secrets; // The secrets for the Chainlink Functions request
+  string source; // The source code for the Chainlink Functions request
+}
+
+
+contract DePreMa is ResultsConsumer{
 
     /// @notice The minimum amount of tokens that can be wagered
   uint256 private constant MIN_WAGER = 0.00001 ether;
@@ -75,6 +87,13 @@ contract DePreMa is ResultsConsumer {
       error ResolveAlreadyRequested();
       error NothingToClaim();
 
+
+  constructor(
+    Config memory config
+  )
+    ResultsConsumer(config.oracle, config.subscriptionId, config.source, config.secrets, config.gasLimit)
+  {}
+
     //Actions
 
     function predict(uint256 wagerId, Result result) public payable {
@@ -104,7 +123,7 @@ contract DePreMa is ResultsConsumer {
   /// @param timestamp The timestamp of the wager start time
   /// @param result The predicted result
   function registerAndPredict(uint256 activityId, uint256 externalId, uint256 timestamp, Result result) external payable {
-    uint256 wagerId = _registerwager(sportId, externalId, timestamp);
+    uint256 wagerId = _registerWager(activityId, externalId, timestamp);
     predict(wagerId, result);
   }
 
@@ -141,7 +160,8 @@ contract DePreMa is ResultsConsumer {
     // Claim winnings depending on the transfer parameter
     if (transfer) {
       // Transfer the winnings to the user on the another chain
-      _sendTransferRequest(user, totalWinnings);
+      payable(user).transfer(totalWinnings);
+
     } else {
       // Transfer the winnings to the user on the same chain
       payable(user).transfer(totalWinnings);
@@ -151,10 +171,10 @@ contract DePreMa is ResultsConsumer {
   }
 
   /// @notice Register a game in the contract
-  /// @param sportId The ID of the sport
+  /// @param activityId The ID of the sport
   /// @param externalId The ID of the game on the external sports API
   /// @param timestamp The timestamp of the game start time
-  /// @return gameId The ID of the game used in the contract
+  /// @return wagerId The ID of the game used in the contract
   function _registerWager(uint256 activityId, uint256 externalId, uint256 timestamp) internal returns (uint256 wagerId) {
     wagerId = getWagerId(activityId, externalId);
 
@@ -171,7 +191,7 @@ contract DePreMa is ResultsConsumer {
   }
 
  /// @notice Request the result of a game from the external sports API
-  /// @param gameId The ID of the game
+  /// @param wagerId The ID of the game
   /// @dev Uses Chainlink Functions via the ResultsConsumer contract
   function _requestResolve(uint256 wagerId) internal {
     Wager memory wager = wagers[wagerId];
@@ -193,9 +213,9 @@ contract DePreMa is ResultsConsumer {
   /// @param response The result of the game
   /// @dev Called back by the ResultsConsumer contract when the result is received
   function _processResult(uint256 activityId, uint256 externalId, bytes memory response) internal override {
-    uint256 wagerId = getGameId(activityId, externalId);
+    uint256 wagerId = getWagerId(activityId, externalId);
     Result result = Result(uint256(bytes32(response)));
-    _resolveGame(wagerId, result);
+    _resolveWager(wagerId, result);
   }
 
   /// @notice Resolve a game with a final result
@@ -232,11 +252,11 @@ contract DePreMa is ResultsConsumer {
 
   // GETTERS
 
-  /// @notice Get the ID of a game used in the contract
-  /// @param wagerId The ID of the sport
-  /// @param externalId The ID of the game on the external sports API
-  /// @return gameId The ID of the game used in the contract
-  /// @dev The game ID is a unique number combining of the sport ID and the external ID
+  // @notice Get the ID of a game used in the contract
+  // @param wagerId The ID of the sport
+  // @param externalId The ID of the game on the external sports API
+  // @return wagerId The ID of the game used in the contract
+  // @dev The game ID is a unique number combining of the sport ID and the external ID
   function getWagerId(uint256 activityId, uint256 externalId) public pure returns (uint256) {
     return (activityId << 128) | externalId;
   }
@@ -331,8 +351,8 @@ contract DePreMa is ResultsConsumer {
   /// @dev The game must be registered and not resolved
   /// @dev Used by Chainlink Automation to determine if a game result should be requested
   function readyToResolve(uint256 wagerId) public view returns (bool) {
-    return wagers[wagerId].timestamp + WAGER_RESOLVE_DELAY < block.timestamp;
+    return wagers[wagerId].timestamp + Wager_RESOLVE_DELAY < block.timestamp;
   }
 
-  //CHAINLNK AUTOMATION
-  //...TBC
+
+}
