@@ -1,4 +1,4 @@
-pragma solidity ^0.8.23;
+pragma solidity ^0.8.7;
 
 
 
@@ -88,10 +88,10 @@ contract DePreMa is ResultsConsumer{
       error NothingToClaim();
 
 
-  constructor(
-    Config memory config
+ constructor(
+   address oracle, uint32  gasLimit
   )
-    ResultsConsumer(config.oracle, config.subscriptionId, config.source, config.secrets, config.gasLimit)
+    ResultsConsumer(oracle, 1234, "", "", 30000)
   {}
 
     //Actions
