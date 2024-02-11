@@ -1,7 +1,7 @@
 'use client'
 import { useModalContext } from '@/context/ModalContext'
 import { useWalletContext } from '@/context/WalletContext'
-import { sportsPredictionGameABI } from '@/generated'
+import { predictionABI } from '@/generated'
 import { contractAddress } from '@/lib/constants'
 import {
   Box,
@@ -13,8 +13,10 @@ import {
   InputAdornment,
   Button,
 } from '@mui/material'
+import dayjs from 'dayjs'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
+import { parseEther } from 'viem'
 
 const style = {
   position: 'absolute',
@@ -39,44 +41,55 @@ export const Modal = ({ text }) => {
 
   const confirmTransaction = async (amount) => {
     setLoading(true)
-    const gameId = await readContract({
-      address: contractAddress,
-      abi: sportsPredictionGameABI,
-      functionName: 'getGameId',
-      args: [BigInt(prediction.game.sportId), BigInt(prediction.game.id)],
-    })
+    try {
+      // const gameId = await readContract({
+      //   address: contractAddress,
+      //   abi: predictionABI,
+      //   functionName: 'getGameId',
+      //   args: [BigInt(prediction.game.sportId), BigInt(prediction.game.id)],
+      // })
 
-    const game = await readContract({
-      address: contractAddress,
-      abi: sportsPredictionGameABI,
-      functionName: 'getGame',
-      args: [gameId],
-    })
+      // const game = await readContract({
+      //   address: contractAddress,
+      //   abi: predictionABI,
+      //   functionName: 'getGame',
+      //   args: [gameId],
+      // })
 
-    if (game.externalId === BigInt(0)) {
+      // if (game.externalId === BigInt(0)) {
       const config = await prepareWriteContract({
         address: contractAddress,
-        abi: sportsPredictionGameABI,
+        abi: predictionABI,
         functionName: 'registerAndPredict',
         args: [
-          BigInt(prediction.game.sportId),
-          BigInt(prediction.game.id),
-          BigInt(prediction.game.timestamp),
-          winnerToResult[prediction.predictedWinner],
+          BigInt(1),
+          BigInt(1),
+          BigInt(dayjs().add(1, 'day').toISOString()),
+          'home',
+          // BigInt(prediction.game.sportId),
+          // BigInt(prediction.game.id),
+          // BigInt(prediction.game.timestamp),
+          // winnerToResult[prediction.predictedWinner],
         ],
         value: parseEther(`${prediction.wager ?? 0}`),
       })
 
       tx = await writeContract(config)
-    } else {
-      const config = await prepareWriteContract({
-        address: contractAddress,
-        abi: sportsPredictionGameABI,
-        functionName: 'predict',
-        args: [gameId, winnerToResult[prediction.predictedWinner]],
-        value: parseEther(`${prediction.wager ?? 0}`),
-      })
-      tx = await writeContract(config)
+      console.log('🚀 ~ confirmTransaction ~ tx:', tx)
+      // } else {
+      //   const config = await prepareWriteContract({
+      //     address: contractAddress,
+      //     abi: predictionABI,
+      //     functionName: 'predict',
+      //     args: [gameId, winnerToResult[prediction.predictedWinner]],
+      //     value: parseEther(`${prediction.wager ?? 0}`),
+      //   })
+      //   tx = await writeContract(config)
+      // }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
