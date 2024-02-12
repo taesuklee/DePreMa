@@ -19368,9 +19368,8 @@ export const fetchGames = async (date) => {
   }
 
   try {
-    // const response = await axios.request(options)
-    // return response.data.data
-    return mockdata.data
+    const response = await axios.request(options)
+    return response.data.data ?? mockdata.data
     return
   } catch (error) {
     console.error(error)
