@@ -17,6 +17,10 @@ import dayjs from 'dayjs'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { parseEther } from 'viem'
+import { http, createConfig, simulateContract } from '@wagmi/core'
+import { mainnet, sepolia } from '@wagmi/core/chains'
+import { config } from '@/config'
+import { useReadContract, useWriteContract } from 'wagmi'
 
 const style = {
   position: 'absolute',
@@ -33,6 +37,11 @@ const style = {
 export const Modal = ({ text }) => {
   const [amount, setAmount] = useState(0)
   const [loading, setLoading] = useState(false)
+  const { data: hash, writeContract } = useWriteContract()
+  const { data: balance } = useReadContract({
+    abi: predictionABI,
+    address: contractAddress,
+  })
 
   const { open, setOpen } = useModalContext()
   const { address } = useWalletContext()
@@ -57,25 +66,42 @@ export const Modal = ({ text }) => {
       // })
 
       // if (game.externalId === BigInt(0)) {
-      const config = await prepareWriteContract({
+
+      // const conf = await simulateContract(config, {
+      //   address: contractAddress,
+      //   abi: predictionABI,
+      //   functionName: 'registerAndPredict',
+      //   args: [
+      //     BigInt(1),
+      //     BigInt(1),
+      //     BigInt(1707683621),
+      //     'home',
+      //     // BigInt(prediction.game.sportId),
+      //     // BigInt(prediction.game.id),
+      //     // BigInt(prediction.game.timestamp),
+      //     // winnerToResult[prediction.predictedWinner],
+      //   ],
+      //   value: parseEther(`${amount ?? 0}`),
+      // })
+
+      const tx = await writeContract({
         address: contractAddress,
         abi: predictionABI,
         functionName: 'registerAndPredict',
         args: [
           BigInt(1),
           BigInt(1),
-          BigInt(dayjs().add(1, 'day').toISOString()),
+          BigInt(1707683621),
           'home',
           // BigInt(prediction.game.sportId),
           // BigInt(prediction.game.id),
           // BigInt(prediction.game.timestamp),
           // winnerToResult[prediction.predictedWinner],
         ],
-        value: parseEther(`${prediction.wager ?? 0}`),
+        value: parseEther(`${amount ?? 0}`),
       })
 
-      tx = await writeContract(config)
-      console.log('🚀 ~ confirmTransaction ~ tx:', tx)
+      console.log('🚀 ~ confirmTransaction ~ tx:', tx, hash)
       // } else {
       //   const config = await prepareWriteContract({
       //     address: contractAddress,

@@ -3304,7 +3304,7 @@
   resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.4.15.tgz"
   integrity sha512-KzfPTxVaWfB+eGcGdbSf4CWdaXcGDqckoeXUh7SB3fZdEtzPCK2Vq9B/lRRL3yutax/LWITz+SwvgyOxz5V75g==
 
-"@wagmi/connectors@>=4.0.0", "@wagmi/connectors@4.1.13":
+"@wagmi/connectors@^4.1.13", "@wagmi/connectors@>=4.0.0", "@wagmi/connectors@4.1.13":
   version "4.1.13"
   resolved "https://registry.npmjs.org/@wagmi/connectors/-/connectors-4.1.13.tgz"
   integrity sha512-icllYbAHyXBChZK1FdVobCdZFSJQO5NQWAxv5C8P/qJrXdQPeDIQtmdcschB6h0cqfU9zjSSOkmEBZBAcOT2TQ==
@@ -3316,7 +3316,7 @@
     "@walletconnect/ethereum-provider" "2.11.1"
     "@walletconnect/modal" "2.6.2"
 
-"@wagmi/core@>=2.0.0", "@wagmi/core@2.6.4":
+"@wagmi/core@^2.6.4", "@wagmi/core@>=2.0.0", "@wagmi/core@2.6.4":
   version "2.6.4"
   resolved "https://registry.npmjs.org/@wagmi/core/-/core-2.6.4.tgz"
   integrity sha512-+p2vbztAaAOehwr8lh/oS3mzsJBByJssRqIYTpexC75O68HWeHgSixGLJOUFrVUwfn++/vuU5nj0Ye5PnJ3m6g==

@@ -19368,8 +19368,11 @@ export const fetchGames = async (date) => {
   }
 
   try {
-    const response = await axios.request(options)
-    return response.data.data ?? mockdata.data
+    console.log('HERE')
+    // const response = await axios.request(options)
+    // console.log('🚀 ~ fetchGames ~ response:', response)
+    // return response.data.data ?? mockdata.data
+    return mockdata.data
     return
   } catch (error) {
     console.error(error)
