@@ -41,6 +41,7 @@ export const Modal = ({ text }) => {
   const { data: balance } = useReadContract({
     abi: predictionABI,
     address: contractAddress,
+    functionName: 'retrieve',
   })
 
   const { open, setOpen } = useModalContext()
@@ -51,6 +52,15 @@ export const Modal = ({ text }) => {
   const confirmTransaction = async (amount) => {
     setLoading(true)
     try {
+      writeContract({
+        abi: predictionABI,
+        address: contractAddress,
+        functionName: 'store',
+        args: [
+          amount,
+          // parseEther(`${amount ?? 0}`)
+        ],
+      })
       // const gameId = await readContract({
       //   address: contractAddress,
       //   abi: predictionABI,
@@ -84,24 +94,23 @@ export const Modal = ({ text }) => {
       //   value: parseEther(`${amount ?? 0}`),
       // })
 
-      const tx = await writeContract({
-        address: contractAddress,
-        abi: predictionABI,
-        functionName: 'registerAndPredict',
-        args: [
-          BigInt(1),
-          BigInt(1),
-          BigInt(1707683621),
-          'home',
-          // BigInt(prediction.game.sportId),
-          // BigInt(prediction.game.id),
-          // BigInt(prediction.game.timestamp),
-          // winnerToResult[prediction.predictedWinner],
-        ],
-        value: parseEther(`${amount ?? 0}`),
-      })
+      // const tx = await writeContract({
+      //   address: contractAddress,
+      //   abi: predictionABI,
+      //   functionName: 'registerAndPredict',
+      //   args: [
+      //     BigInt(1),
+      //     BigInt(1),
+      //     BigInt(1707683621),
+      //     'home',
+      //     // BigInt(prediction.game.sportId),
+      //     // BigInt(prediction.game.id),
+      //     // BigInt(prediction.game.timestamp),
+      //     // winnerToResult[prediction.predictedWinner],
+      //   ],
+      //   value: parseEther(`${amount ?? 0}`),
+      // })
 
-      console.log('🚀 ~ confirmTransaction ~ tx:', tx, hash)
       // } else {
       //   const config = await prepareWriteContract({
       //     address: contractAddress,
