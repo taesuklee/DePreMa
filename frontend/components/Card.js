@@ -28,9 +28,11 @@ export default function Card({ game }) {
             : UNKNOWN}
         </p>
         <p className="ml-2 truncate font-[450] md:flex-1">
-          {wager && wager.event1WagerAmount
-            ? `${Number(wager.event1WagerAmount) / 1000000000000000000} ETH`
-            : '0 ETH'}
+          {wager
+            ? wager.event2WagerAmount
+              ? `${Number(wager.event1WagerAmount) / 1000000000000000000} ETH`
+              : '0 ETH'
+            : 'Connect wallet to see wager'}
         </p>
         <div className="flex items-center">
           <div className="mx-4 rounded bg-primary px-[10px] py-1">
@@ -77,9 +79,11 @@ export default function Card({ game }) {
             : UNKNOWN}
         </p>
         <p className="ml-2 truncate font-[450] md:flex-1">
-          {wager && wager.event2WagerAmount
-            ? `${Number(wager.event2WagerAmount) / 1000000000000000000} ETH`
-            : '0 ETH'}
+          {wager
+            ? wager.event2WagerAmount
+              ? `${Number(wager.event2WagerAmount) / 1000000000000000000} ETH`
+              : '0 ETH'
+            : 'Connect wallet to see wager'}
         </p>
         <div className="flex items-center">
           <div className="mx-4 rounded bg-primary px-[10px] py-1">

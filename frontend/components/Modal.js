@@ -66,7 +66,6 @@ export const Modal = ({ text }) => {
       address: contractAddress,
       abi: predictionABI,
       functionName: 'predict',
-      // args: [BigInt('1'), BigInt('2')],
       args: [predictionOptions.gameId, predictionOptions.betOn],
       value: parseEther(amount),
     })
@@ -89,7 +88,9 @@ export const Modal = ({ text }) => {
                   href={`https://sepolia.etherscan.io/tx/${hash}`}
                   passHref>
                   <a target="_blank" rel="noopener noreferrer">
-                    Click here to see the transaction
+                    {`${
+                      isLoading ? 'Transferring.' : 'Completed.'
+                    } Click here to see the transaction.`}
                   </a>
                 </Link>
               )}
