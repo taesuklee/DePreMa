@@ -15,7 +15,7 @@ struct Config {
 }
 
 
-contract DePreMa{
+contract Test{
 
     /// @notice The minimum amount of tokens that can be wagered
   uint256 private constant MIN_WAGER = 0.00001 ether;
@@ -42,14 +42,15 @@ contract DePreMa{
 
       /// @notice Owner of the Oracle
   address private oracle;
+   
+  uint private currentWagerID;
 
 
 
 
     //TODO: Interface wager: wagerID? API?
      struct Wager {
-    uint256 activityId; //The ID of the activity
-    uint256 externalId; // The ID of the wager on the external sports API
+    uint256 wagerID; // The ID of the wager
     uint256 timestamp; // The timestamp of the wager start time
     uint256 event1WagerAmount; // The total amount of tokens wagered on event 1
     uint256 event2WagerAmount; // The total amount of tokens wagered on event 2
@@ -105,11 +106,13 @@ contract DePreMa{
     //Actions
 
     function predict(uint256 wagerId, Result result) public payable {
+    
+    //Check if wager exists
+    if (wagerId > currentWagerID) revert WagerNotRegistered();
     Wager memory wager = wagers[wagerId];
     uint256 wagerAmount = msg.value;
 
     // Check if the prediction is valid
-    if (wager.externalId == 0) revert WagerNotRegistered();
     if (wager.resolved) revert WagerIsResolved();
     if (wager.timestamp < block.timestamp) revert WagerAlreadyStarted();
    // if (wagerAmount < MIN_WAGER) revert InsufficientValue();
@@ -126,18 +129,16 @@ contract DePreMa{
   }
 
   /// @notice Register a wager and predict the result in one transaction
-  /// @param activityId The ID of the sport
-  /// @param externalId The ID of the wager on the external sports API
+
   /// @param timestamp The timestamp of the wager start time
-  function register(uint256 activityId, uint256 externalId, uint256 timestamp) public onlyOracle {
-    _registerWager(activityId, externalId, timestamp);
+  function register(uint256 timestamp) public onlyOracle {
+    _registerWager(timestamp);
   }
 
   /// @notice Claim winnings for a game
   /// @param wagerId The ID of the game
-  /// @param transfer Whether or not to transfer the winnings to another chain
   /// @dev Works for multiple predictions per user
-  function claim(uint256 wagerId, bool transfer) external {
+  function claim(uint256 wagerId) external {
     Wager memory wager = wagers[wagerId];
     address user = msg.sender;
 
@@ -163,33 +164,23 @@ contract DePreMa{
 
     if (totalWinnings == 0) revert NothingToClaim();
 
-    // Claim winnings depending on the transfer parameter
-    if (transfer) {
-      // Transfer the winnings to the user on the another chain
-      payable(user).transfer(totalWinnings);
-
-    } else {
       // Transfer the winnings to the user on the same chain
       payable(user).transfer(totalWinnings);
-    }
 
     emit Claimed(user, wagerId, totalWinnings);
   }
 
   /// @notice Register a game in the contract
-  /// @param activityId The ID of the sport
-  /// @param externalId The ID of the game on the external sports API
   /// @param timestamp The timestamp of the game start time
   /// @return wagerId The ID of the game used in the contract
-  function _registerWager(uint256 activityId, uint256 externalId, uint256 timestamp) internal returns (uint256 wagerId) {
-    wagerId = getWagerId(activityId, externalId);
+  function _registerWager(uint256 timestamp) internal returns (uint256 wagerId) {
+    currentWagerID++;
 
     // Check if the game can be registered
-    if (wagers[wagerId].externalId != 0) revert WagerAlreadyRegistered();
     if (timestamp < block.timestamp) revert TimestampInPast();
 
     // Store the game data
-    wagers[wagerId] = Wager(activityId, externalId, timestamp, 0, 0, false, Result.None);
+    wagers[currentWagerID] = Wager(currentWagerID, timestamp, 0, 0, false, Result.None);
     // Add the game to the active games list
     activeWagers.push(wagerId);
 
@@ -237,8 +228,8 @@ contract DePreMa{
   // @param externalId The ID of the game on the external sports API
   // @return wagerId The ID of the game used in the contract
   // @dev The game ID is a unique number combining of the sport ID and the external ID
-  function getWagerId(uint256 activityId, uint256 externalId) public pure returns (uint256) {
-    return (activityId << 128) | externalId;
+  function getWagerId() public view returns (uint256) {
+    return currentWagerID;
   }
 
   /// @notice Get the data of a game
