@@ -15,12 +15,17 @@ import {
 } from '@mui/material'
 import dayjs from 'dayjs'
 import { Loader2 } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { parseEther } from 'viem'
 import { http, createConfig, simulateContract } from '@wagmi/core'
 import { mainnet, sepolia } from '@wagmi/core/chains'
 import { config } from '@/config'
-import { useReadContract, useWriteContract } from 'wagmi'
+import {
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import Link from 'next/link'
 
 const style = {
   position: 'absolute',
@@ -37,96 +42,100 @@ const style = {
 export const Modal = ({ text }) => {
   const [amount, setAmount] = useState(0)
   const [loading, setLoading] = useState(false)
-  const { data: hash, writeContract } = useWriteContract()
+  const { data: hash, writeContract, isPending } = useWriteContract()
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash })
   const { data: balance } = useReadContract({
     address: contractAddress,
     abi: predictionABI,
     functionName: 'getWagerId',
-    args: [Number(amount), 999],
+    // args: [Number(amount), 999],
   })
+  console.log('🚀 ~ Modal ~ balance:', balance)
 
   const { open, setOpen } = useModalContext()
   const { address } = useWalletContext()
 
   const handleClose = () => setOpen(!open)
 
-  const confirmTransaction = async (amount) => {
-    setLoading(true)
-    try {
-      const tx = await writeContract({
-        address: contractAddress,
-        abi: predictionABI,
-        functionName: 'registerAndPredict',
-        args: [1, 1, 1708012422, 'home'],
-        value: parseEther(`${amount ?? 0}`),
-      })
-      console.log('🚀 ~ confirmTransaction ~ tx:', tx, hash)
-
-      // const gameId = await readContract({
-      //   address: contractAddress,
-      //   abi: predictionABI,
-      //   functionName: 'getGameId',
-      //   args: [BigInt(prediction.game.sportId), BigInt(prediction.game.id)],
-      // })
-
-      // const game = await readContract({
-      //   address: contractAddress,
-      //   abi: predictionABI,
-      //   functionName: 'getGame',
-      //   args: [gameId],
-      // })
-
-      // if (game.externalId === BigInt(0)) {
-
-      // const conf = await simulateContract(config, {
-      //   address: contractAddress,
-      //   abi: predictionABI,
-      //   functionName: 'registerAndPredict',
-      //   args: [
-      //     BigInt(1),
-      //     BigInt(1),
-      //     BigInt(1707683621),
-      //     'home',
-      //     // BigInt(prediction.game.sportId),
-      //     // BigInt(prediction.game.id),
-      //     // BigInt(prediction.game.timestamp),
-      //     // winnerToResult[prediction.predictedWinner],
-      //   ],
-      //   value: parseEther(`${amount ?? 0}`),
-      // })
-
-      // const tx = await writeContract({
-      //   address: contractAddress,
-      //   abi: predictionABI,
-      //   functionName: 'registerAndPredict',
-      //   args: [
-      //     BigInt(1),
-      //     BigInt(1),
-      //     BigInt(1707683621),
-      //     'home',
-      //     // BigInt(prediction.game.sportId),
-      //     // BigInt(prediction.game.id),
-      //     // BigInt(prediction.game.timestamp),
-      //     // winnerToResult[prediction.predictedWinner],
-      //   ],
-      //   value: parseEther(`${amount ?? 0}`),
-      // })
-
-      // } else {
-      //   const config = await prepareWriteContract({
-      //     address: contractAddress,
-      //     abi: predictionABI,
-      //     functionName: 'predict',
-      //     args: [gameId, winnerToResult[prediction.predictedWinner]],
-      //     value: parseEther(`${prediction.wager ?? 0}`),
-      //   })
-      //   tx = await writeContract(config)
-      // }
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    console.log('HERE', isLoading, isPending, isSuccess)
+    if (isPending || isLoading || isSuccess) {
+      setLoading(true)
+      return
     }
+
+    setLoading(false)
+  }, [isLoading, isPending, isSuccess])
+
+  const confirmTransaction = async (amount) => {
+    writeContract({
+      address: contractAddress,
+      abi: predictionABI,
+      functionName: 'predict',
+      args: [BigInt('1'), BigInt('1')],
+      value: parseEther(amount),
+    })
+
+    // const gameId = await readContract({
+    //   address: contractAddress,
+    //   abi: predictionABI,
+    //   functionName: 'getGameId',
+    //   args: [BigInt(prediction.game.sportId), BigInt(prediction.game.id)],
+    // })
+
+    // const game = await readContract({
+    //   address: contractAddress,
+    //   abi: predictionABI,
+    //   functionName: 'getGame',
+    //   args: [gameId],
+    // })
+
+    // if (game.externalId === BigInt(0)) {
+
+    // const conf = await simulateContract(config, {
+    //   address: contractAddress,
+    //   abi: predictionABI,
+    //   functionName: 'registerAndPredict',
+    //   args: [
+    //     BigInt(1),
+    //     BigInt(1),
+    //     BigInt(1707683621),
+    //     'home',
+    //     // BigInt(prediction.game.sportId),
+    //     // BigInt(prediction.game.id),
+    //     // BigInt(prediction.game.timestamp),
+    //     // winnerToResult[prediction.predictedWinner],
+    //   ],
+    //   value: parseEther(`${amount ?? 0}`),
+    // })
+
+    // const tx = await writeContract({
+    //   address: contractAddress,
+    //   abi: predictionABI,
+    //   functionName: 'registerAndPredict',
+    //   args: [
+    //     BigInt(1),
+    //     BigInt(1),
+    //     BigInt(1707683621),
+    //     'home',
+    //     // BigInt(prediction.game.sportId),
+    //     // BigInt(prediction.game.id),
+    //     // BigInt(prediction.game.timestamp),
+    //     // winnerToResult[prediction.predictedWinner],
+    //   ],
+    //   value: parseEther(`${amount ?? 0}`),
+    // })
+
+    // } else {
+    //   const config = await prepareWriteContract({
+    //     address: contractAddress,
+    //     abi: predictionABI,
+    //     functionName: 'predict',
+    //     args: [gameId, winnerToResult[prediction.predictedWinner]],
+    //     value: parseEther(`${prediction.wager ?? 0}`),
+    //   })
+    //   tx = await writeContract(config)
+    // }
   }
 
   return (
@@ -139,7 +148,17 @@ export const Modal = ({ text }) => {
         {address ? (
           loading ? (
             <div className="flex items-center justify-center">
-              <Loader2 className="animate-spin" />
+              {!isSuccess && <Loader2 className="animate-spin" />}
+              {!isPending && (
+                <Link
+                  legacyBehavior
+                  href={`https://sepolia.etherscan.io/tx/${hash}`}
+                  passHref>
+                  <a target="_blank" rel="noopener noreferrer">
+                    To the transaction
+                  </a>
+                </Link>
+              )}
             </div>
           ) : (
             <>
@@ -167,10 +186,11 @@ export const Modal = ({ text }) => {
                   />
                 </FormControl>
                 <Button
+                  disabled={isPending}
                   className="border-blue-800 text-blue-800"
                   variant="outlined"
                   onClick={() => confirmTransaction(amount)}>
-                  Confirm
+                  {isPending ? 'Confirming...' : 'Confirm'}
                 </Button>
               </div>
             </>
