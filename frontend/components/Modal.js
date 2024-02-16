@@ -39,9 +39,10 @@ export const Modal = ({ text }) => {
   const [loading, setLoading] = useState(false)
   const { data: hash, writeContract } = useWriteContract()
   const { data: balance } = useReadContract({
-    abi: predictionABI,
     address: contractAddress,
-    functionName: 'retrieve',
+    abi: predictionABI,
+    functionName: 'getWagerId',
+    args: [Number(amount), 999],
   })
 
   const { open, setOpen } = useModalContext()
@@ -52,15 +53,15 @@ export const Modal = ({ text }) => {
   const confirmTransaction = async (amount) => {
     setLoading(true)
     try {
-      writeContract({
-        abi: predictionABI,
+      const tx = await writeContract({
         address: contractAddress,
-        functionName: 'store',
-        args: [
-          amount,
-          // parseEther(`${amount ?? 0}`)
-        ],
+        abi: predictionABI,
+        functionName: 'registerAndPredict',
+        args: [1, 1, 1708012422, 'home'],
+        value: parseEther(`${amount ?? 0}`),
       })
+      console.log('🚀 ~ confirmTransaction ~ tx:', tx, hash)
+
       // const gameId = await readContract({
       //   address: contractAddress,
       //   abi: predictionABI,

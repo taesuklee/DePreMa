@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
+import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 import {ResultsConsumer} from "./ResultsConsumer.sol";
 
-contract PredictionGame is ResultsConsumer {
+contract PredictionGame is ResultsConsumer, ConfirmedOwner {
     /// @notice The minimum amount of tokens that can be wagered
     uint256 private constant MIN_WAGER = 0.00001 ether;
     /// @notice The maximum amount of tokens that can be wagered
@@ -27,15 +28,15 @@ contract PredictionGame is ResultsConsumer {
     // STRUCTS
     struct Config {
         address oracle; // The address of the Chainlink Function oracle
-        address ccipRouter; // The address of the Chainlink CCIP router
-        address link; // The address of the LINK token
-        address weth9Token; // The address of the WETH9 token
-        address exchangeToken; // The address of the exchange token used to transfer native tokens
-        address uniswapV3Router; // The address of the Uniswap V3 router
+        // address ccipRouter; // The address of the Chainlink CCIP router
+        // address link; // The address of the LINK token
+        // address weth9Token; // The address of the WETH9 token
+        // address exchangeToken; // The address of the exchange token used to transfer native tokens
+        // address uniswapV3Router; // The address of the Uniswap V3 router
         uint64 subscriptionId; // The ID of the Chainlink Functions subscription
-        uint64 destinationChainSelector; // The chain selector for the winnings transfer destination chain
+        // uint64 destinationChainSelector; // The chain selector for the winnings transfer destination chain
         uint32 gasLimit; // The gas limit for the Chainlink Functions request callback
-        bytes secrets; // The secrets for the Chainlink Functions request
+        // bytes secrets; // The secrets for the Chainlink Functions request
         string source; // The source code for the Chainlink Functions request
     }
 
@@ -96,9 +97,10 @@ contract PredictionGame is ResultsConsumer {
             config.oracle,
             config.subscriptionId,
             config.source,
-            config.secrets,
+            // config.secrets,
             config.gasLimit
         )
+        ConfirmedOwner(msg.sender)
     {}
 
     // INTERNAL
@@ -109,8 +111,29 @@ contract PredictionGame is ResultsConsumer {
     ) internal virtual override {}
 
     // GETTERS
-
     function getNumber(uint256 num) public pure returns (uint256) {
         return (num + 1);
+    }
+
+    function sendRequest(
+        string memory source,
+        string[] memory args,
+        uint64 subscriptionId,
+        uint32 gasLimit,
+        bytes32 donID
+    ) external onlyOwner returns (bytes32 requestId) {
+        FunctionsRequest.Request memory req;
+        req.initializeRequestForInlineJavaScript(source);
+
+        if (args.length > 0) req.setArgs(args);
+
+        s_lastRequestId = _sendRequest(
+            req.encodeCBOR(),
+            subscriptionId,
+            gasLimit,
+            donID
+        );
+
+        return s_lastRequestId;
     }
 }

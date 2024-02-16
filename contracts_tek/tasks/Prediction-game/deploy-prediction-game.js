@@ -11,19 +11,23 @@ task('deploy-prediction-game', 'Deploys the PredictionGame contract').setAction(
     console.log('\n__Compiling Contracts__')
     await run('compile')
 
-    const overrides = {}
-    // If specified, use the gas price from the network config instead of Ethers estimated price
-    if (networks[network.name].gasPrice) {
-      overrides.gasPrice = networks[network.name].gasPrice
-    }
-    // If specified, use the nonce from the network config instead of automatically calculating it
-    if (networks[network.name].nonce) {
-      overrides.nonce = networks[network.name].nonce
+    const overrides = {
+      oracle: '0xb83E47C2bC239B3bf370bc41e1459A34b41238D0',
+      subscriptionId: 1986,
+      source: '',
+      secrets: '0x',
+      gasLimit: 23,
     }
 
+    console.log('\n__Creating contract factory__')
+
     const predictionGameContractFactory = await ethers.getContractFactory(
-      'PredictionGame'
+      // 'PredictionGame'
+      'Lock'
     )
+
+    console.log('\n__Creating contract__')
+
     const predictionGameContract = await predictionGameContractFactory.deploy(
       overrides
     )
