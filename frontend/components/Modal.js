@@ -44,21 +44,13 @@ export const Modal = ({ text }) => {
   const [loading, setLoading] = useState(false)
   const { data: hash, writeContract, isPending } = useWriteContract()
   const { isLoading, isSuccess } = useWaitForTransactionReceipt({ hash })
-  const { data: balance } = useReadContract({
-    address: contractAddress,
-    abi: predictionABI,
-    functionName: 'getWagerId',
-    // args: [Number(amount), 999],
-  })
-  console.log('🚀 ~ Modal ~ balance:', balance)
 
-  const { open, setOpen } = useModalContext()
+  const { open, setOpen, predictionOptions } = useModalContext()
   const { address } = useWalletContext()
 
   const handleClose = () => setOpen(!open)
 
   useEffect(() => {
-    console.log('HERE', isLoading, isPending, isSuccess)
     if (isPending || isLoading || isSuccess) {
       setLoading(true)
       return
@@ -67,75 +59,17 @@ export const Modal = ({ text }) => {
     setLoading(false)
   }, [isLoading, isPending, isSuccess])
 
+  console.log('ASDHF', predictionOptions)
+
   const confirmTransaction = async (amount) => {
     writeContract({
       address: contractAddress,
       abi: predictionABI,
       functionName: 'predict',
-      args: [BigInt('1'), BigInt('1')],
+      // args: [BigInt('1'), BigInt('2')],
+      args: [predictionOptions.gameId, predictionOptions.betOn],
       value: parseEther(amount),
     })
-
-    // const gameId = await readContract({
-    //   address: contractAddress,
-    //   abi: predictionABI,
-    //   functionName: 'getGameId',
-    //   args: [BigInt(prediction.game.sportId), BigInt(prediction.game.id)],
-    // })
-
-    // const game = await readContract({
-    //   address: contractAddress,
-    //   abi: predictionABI,
-    //   functionName: 'getGame',
-    //   args: [gameId],
-    // })
-
-    // if (game.externalId === BigInt(0)) {
-
-    // const conf = await simulateContract(config, {
-    //   address: contractAddress,
-    //   abi: predictionABI,
-    //   functionName: 'registerAndPredict',
-    //   args: [
-    //     BigInt(1),
-    //     BigInt(1),
-    //     BigInt(1707683621),
-    //     'home',
-    //     // BigInt(prediction.game.sportId),
-    //     // BigInt(prediction.game.id),
-    //     // BigInt(prediction.game.timestamp),
-    //     // winnerToResult[prediction.predictedWinner],
-    //   ],
-    //   value: parseEther(`${amount ?? 0}`),
-    // })
-
-    // const tx = await writeContract({
-    //   address: contractAddress,
-    //   abi: predictionABI,
-    //   functionName: 'registerAndPredict',
-    //   args: [
-    //     BigInt(1),
-    //     BigInt(1),
-    //     BigInt(1707683621),
-    //     'home',
-    //     // BigInt(prediction.game.sportId),
-    //     // BigInt(prediction.game.id),
-    //     // BigInt(prediction.game.timestamp),
-    //     // winnerToResult[prediction.predictedWinner],
-    //   ],
-    //   value: parseEther(`${amount ?? 0}`),
-    // })
-
-    // } else {
-    //   const config = await prepareWriteContract({
-    //     address: contractAddress,
-    //     abi: predictionABI,
-    //     functionName: 'predict',
-    //     args: [gameId, winnerToResult[prediction.predictedWinner]],
-    //     value: parseEther(`${prediction.wager ?? 0}`),
-    //   })
-    //   tx = await writeContract(config)
-    // }
   }
 
   return (
@@ -155,7 +89,7 @@ export const Modal = ({ text }) => {
                   href={`https://sepolia.etherscan.io/tx/${hash}`}
                   passHref>
                   <a target="_blank" rel="noopener noreferrer">
-                    To the transaction
+                    Click here to see the transaction
                   </a>
                 </Link>
               )}

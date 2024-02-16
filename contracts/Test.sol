@@ -129,8 +129,6 @@ contract Test {
         emit Predicted(msg.sender, wagerId, result, wagerAmount);
     }
 
-    /// @notice Register a wager and predict the result in one transaction
-
     /// @param timestamp The timestamp of the wager start time
     function register(uint256 timestamp) public onlyOracle {
         _registerWager(timestamp);
@@ -236,10 +234,7 @@ contract Test {
     // GETTERS
 
     // @notice Get the ID of a game used in the contract
-    // @param wagerId The ID of the sport
-    // @param externalId The ID of the game on the external sports API
     // @return wagerId The ID of the game used in the contract
-    // @dev The game ID is a unique number combining of the sport ID and the external ID
     function getWagerId() public view returns (uint256) {
         return currentWagerID;
     }

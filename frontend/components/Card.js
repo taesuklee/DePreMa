@@ -1,10 +1,16 @@
 import { useModalContext } from '@/context/ModalContext'
 import { UNKNOWN } from '@/lib/constants'
+import { fetchActiveWagers, fetchWager } from '@/lib/fetch-data'
 import { Button } from '@mui/material'
 import Image from 'next/image'
+import { useState } from 'react'
 
 export default function Card({ game }) {
-  const { open, setOpen } = useModalContext()
+  const [wager, setWager] = useState()
+
+  const { open, setOpen, setPredictionOptions } = useModalContext()
+
+  fetchWager(game.id).then((data) => setWager(data))
 
   return (
     <div className="m-4 mb-2 rounded-[8px] bg-card p-4">
@@ -21,6 +27,11 @@ export default function Card({ game }) {
             ? game.home_team.name
             : UNKNOWN}
         </p>
+        <p className="ml-2 truncate font-[450] md:flex-1">
+          {wager && wager.event1WagerAmount
+            ? `${Number(wager.event1WagerAmount) / 1000000000000000000} ETH`
+            : '0 ETH'}
+        </p>
         <div className="flex items-center">
           <div className="mx-4 rounded bg-primary px-[10px] py-1">
             {game.home_score && game.home_score.current
@@ -28,7 +39,13 @@ export default function Card({ game }) {
               : UNKNOWN}
           </div>
           <Button
-            onClick={() => setOpen(!open)}
+            onClick={() => {
+              setOpen(!open)
+              setPredictionOptions({
+                gameId: wager.wagerID,
+                betOn: 1,
+              })
+            }}
             variant="outlined"
             disabled={game.status === 'finished' ?? true}>
             Stake
@@ -59,6 +76,11 @@ export default function Card({ game }) {
             ? game.away_team.name
             : UNKNOWN}
         </p>
+        <p className="ml-2 truncate font-[450] md:flex-1">
+          {wager && wager.event2WagerAmount
+            ? `${Number(wager.event2WagerAmount) / 1000000000000000000} ETH`
+            : '0 ETH'}
+        </p>
         <div className="flex items-center">
           <div className="mx-4 rounded bg-primary px-[10px] py-1">
             {game.away_score && game.away_score.current
@@ -68,7 +90,13 @@ export default function Card({ game }) {
           <Button
             variant="outlined"
             disabled={game.status === 'finished' ?? true}
-            onClick={() => setOpen(!open)}>
+            onClick={() => {
+              setOpen(!open)
+              setPredictionOptions({
+                gameId: wager.wagerID,
+                betOn: 2,
+              })
+            }}>
             Stake
           </Button>
         </div>
