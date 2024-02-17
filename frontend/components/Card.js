@@ -30,10 +30,8 @@ export default function Card({ game }) {
         <p className="ml-2 truncate font-[450] md:flex-1">
           {wager
             ? wager.event2WagerAmount
-              ? `Total: ${
-                  Number(wager.event1WagerAmount) / 1000000000000000000
-                } ETH`
-              : 'Total: 0 ETH'
+              ? `${Number(wager.event1WagerAmount) / 1000000000000000000} ETH`
+              : '0 ETH'
             : 'Connect wallet to see wager'}
         </p>
         <div className="flex items-center">
