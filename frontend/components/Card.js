@@ -10,7 +10,8 @@ export default function Card({ game }) {
 
   const { open, setOpen, setPredictionOptions } = useModalContext()
 
-  fetchWager(game.id).then((data) => setWager(data))
+  // fetchWager(game.id).then((data) => setWager(data))
+  fetchWager(game.id).then((data) => console.log('DATA', data))
 
   return (
     <div className="m-4 mb-2 rounded-[8px] bg-card p-4">
@@ -30,8 +31,10 @@ export default function Card({ game }) {
         <p className="ml-2 truncate font-[450] md:flex-1">
           {wager
             ? wager.event2WagerAmount
-              ? `${Number(wager.event1WagerAmount) / 1000000000000000000} ETH`
-              : '0 ETH'
+              ? `Total: ${
+                  Number(wager.event1WagerAmount) / 1000000000000000000
+                } ETH`
+              : 'Total: 0 ETH'
             : 'Connect wallet to see wager'}
         </p>
         <div className="flex items-center">
