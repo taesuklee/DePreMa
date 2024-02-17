@@ -10,8 +10,7 @@ export default function Card({ game }) {
 
   const { open, setOpen, setPredictionOptions } = useModalContext()
 
-  // fetchWager(game.id).then((data) => setWager(data))
-  fetchWager(game.id).then((data) => console.log('DATA', data))
+  fetchWager(game.id).then((data) => setWager(data))
 
   return (
     <div className="m-4 mb-2 rounded-[8px] bg-card p-4">
