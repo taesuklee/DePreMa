@@ -102,7 +102,7 @@ export const Modal = ({ text }) => {
                 variant="h6"
                 component="h2"
                 className="text-black">
-                How much do you want to stake?
+                How much ETH do you want to stake?
               </Typography>
               <div className="flex items-center justify-between">
                 <FormControl sx={{ m: 1 }} variant="outlined">

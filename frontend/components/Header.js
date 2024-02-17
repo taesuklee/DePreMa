@@ -10,7 +10,7 @@ const Header = () => {
           'flex-1 font-mono text-xl font-black leading-5 mx-5',
           fontMono.variable
         )}>
-        Prediction Market
+        wittYbet
       </h1>
       <WalletConnect />
     </div>
