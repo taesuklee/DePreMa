@@ -20,11 +20,7 @@ import { parseEther } from 'viem'
 import { http, createConfig, simulateContract } from '@wagmi/core'
 import { mainnet, sepolia } from '@wagmi/core/chains'
 import { config } from '@/config'
-import {
-  useReadContract,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-} from 'wagmi'
+import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import Link from 'next/link'
 
 const style = {
@@ -58,8 +54,6 @@ export const Modal = ({ text }) => {
 
     setLoading(false)
   }, [isLoading, isPending, isSuccess])
-
-  console.log('ASDHF', predictionOptions)
 
   const confirmTransaction = async (amount) => {
     writeContract({

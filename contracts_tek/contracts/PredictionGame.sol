@@ -12,8 +12,12 @@ contract PredictionGame is ResultsConsumer, ConfirmedOwner {
     /// @notice The delay after a game starts before it can be resolved
     uint256 private constant GAME_RESOLVE_DELAY = 2 hours;
 
+    /// @notice The owner of the contract
+    address private contractOwner;
+
     /// @notice Mapping of game IDs to game data
     mapping(uint256 => Game) private games;
+
     /// @notice Mapping of user addresses to game IDs to predictions
     mapping(address => mapping(uint256 => Prediction[])) private predictions;
 
@@ -41,8 +45,8 @@ contract PredictionGame is ResultsConsumer, ConfirmedOwner {
     }
 
     struct Game {
-        uint256 sportId; // The ID of the sport
-        uint256 externalId; // The ID of the game on the external sports API
+        uint256 categoryId; // The ID of the category
+        uint256 externalId; // The ID of the game on the external API
         uint256 timestamp; // The timestamp of the game start time
         uint256 homeWagerAmount; // The total amount of tokens wagered on the home team
         uint256 awayWagerAmount; // The total amount of tokens wagered on the away team
@@ -101,7 +105,42 @@ contract PredictionGame is ResultsConsumer, ConfirmedOwner {
             config.gasLimit
         )
         ConfirmedOwner(msg.sender)
-    {}
+    {
+        contractOwner = msg.sender;
+    }
+
+    // ACTIONS
+
+    function getGameId(
+        uint256 categoryId,
+        uint256 externalId
+    ) public pure returns (uint256) {
+        return (categoryId << 128) | externalId;
+    }
+
+    /// @notice
+    function createGame(
+        uint256 categoryId,
+        uint256 externalId
+    ) public onlyOwner returns (Game memory) {
+        uint256 gameId = getGameId(categoryId, externalId);
+
+        if (games[gameId].externalId != 0) revert GameAlreadyRegistered();
+
+        Game memory game = Game(
+            categoryId,
+            externalId,
+            block.timestamp,
+            0,
+            0,
+            false,
+            Result.None
+        );
+
+        games[gameId] = game;
+
+        return game;
+    }
 
     // INTERNAL
     function _processResult(
@@ -115,25 +154,29 @@ contract PredictionGame is ResultsConsumer, ConfirmedOwner {
         return (num + 1);
     }
 
-    function sendRequest(
-        string memory source,
-        string[] memory args,
-        uint64 subscriptionId,
-        uint32 gasLimit,
-        bytes32 donID
-    ) external onlyOwner returns (bytes32 requestId) {
-        FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(source);
-
-        if (args.length > 0) req.setArgs(args);
-
-        s_lastRequestId = _sendRequest(
-            req.encodeCBOR(),
-            subscriptionId,
-            gasLimit,
-            donID
-        );
-
-        return s_lastRequestId;
+    function getOwner() public view returns (address) {
+        return contractOwner;
     }
+
+    // function sendRequest(
+    //     string memory source,
+    //     string[] memory args,
+    //     uint64 subscriptionId,
+    //     uint32 gasLimit,
+    //     bytes32 donID
+    // ) external onlyOwner returns (bytes32 requestId) {
+    //     FunctionsRequest.Request memory req;
+    //     req.initializeRequestForInlineJavaScript(source);
+
+    //     if (args.length > 0) req.setArgs(args);
+
+    //     s_lastRequestId = _sendRequest(
+    //         req.encodeCBOR(),
+    //         subscriptionId,
+    //         gasLimit,
+    //         donID
+    //     );
+
+    //     return s_lastRequestId;
+    // }
 }

@@ -1420,3 +1420,16 @@ export const fetchWager = async (wagerId) => {
 
   return data
 }
+
+export const getNumber = () => {
+  const { data } = useReadContract({
+    address: contractAddress,
+    abi: predictionABI,
+    functionName: 'getOwner',
+    // args: [BigInt(5)],
+  })
+
+  console.log('DATA', data)
+
+  return data
+}

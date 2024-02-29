@@ -21,14 +21,17 @@ async function main() {
   // )
 
   console.log('Deploying SC.')
-  const predictionGame = await hre.ethers.deployContract('PredictionGame', {
-    oracle: '0xb83E47C2bC239B3bf370bc41e1459A34b41238D0',
-    subscriptionId: 1986,
-    source: '',
-    secrets: '0x',
-    gasLimit: 23,
-  })
-  console.log(`Deployed: ${predictionGame.target}`)
+  // const sc = await hre.ethers.deployContract('PredictionGame', {
+  //   oracle: '0xb83E47C2bC239B3bf370bc41e1459A34b41238D0',
+  //   subscriptionId: 1986,
+  //   source: '',
+  //   secrets: '0x',
+  //   gasLimit: 23,
+  // })
+  const sc = await hre.ethers.deployContract('FunctionsConsumer', [
+    '0xb83E47C2bC239B3bf370bc41e1459A34b41238D0',
+  ])
+  console.log(`Deployed: ${sc.target}`)
 }
 
 // We recommend this pattern to be able to use async/await everywhere
