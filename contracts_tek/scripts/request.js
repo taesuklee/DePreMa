@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { ethers } = require('ethers')
+const ethers = require('ethers')
 const {
   SubscriptionManager,
   simulateScript,
@@ -12,12 +12,16 @@ const {
 const functionsConsumerAbi = require('./abi/functionsClient.json')
 require('@chainlink/env-enc').config()
 
+const subscriptionId = 1986
+
 const makeRequestToOracle = async () => {
   // hardcoded for Polygon Mumbai
   const routerAddress = '0xb83E47C2bC239B3bf370bc41e1459A34b41238D0'
   const linkTokenAddress = '0x779877A7B0D9E8603169DdbD7836e478b4624789'
   const donId = 'fun-ethereum-sepolia-1'
   const explorerUrl = 'https://sepolia.etherscan.io/'
+  // const consumerAddress = '0xaD89022C5dbb861e020BE0204A115bB2E1223E35'
+  const consumerAddress = '0xd9145CCE52D386f254917e481eB44e9943F39138' // REPLACE this with your Functions consumer address
 
   // Initialize functions settings
   const source = fs
@@ -43,7 +47,6 @@ const makeRequestToOracle = async () => {
     throw new Error(`rpcUrl not provided  - check your environment variables`)
 
   const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-  new ethers.providers()
 
   const wallet = new ethers.Wallet(privateKey)
   const signer = wallet.connect(provider) // create ethers signer for signing transactions

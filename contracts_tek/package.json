@@ -17,6 +17,6 @@
     "@chainlink/env-enc": "^1.0.5",
     "@chainlink/functions-toolkit": "^0.2.8",
     "@openzeppelin/contracts-upgradeable": "^5.0.1",
-    "ethers": "^6.11.1"
+    "ethers": "^5.7.2"
   }
 }
